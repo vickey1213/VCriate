@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Line } from "react-chartjs-2";
 import zoomPlugin from "chartjs-plugin-zoom";
 import {
@@ -25,6 +25,8 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  const chartRef = useRef(null);
+
   const options = {
     responsive: true,
     plugins: {
@@ -36,11 +38,11 @@ const Dashboard = () => {
         zoom: {
           wheel: {
             enabled: true,
-            speed: 0.5,
+            speed: 0.1,
           },
           pinch: {
             enabled: true,
-            speed: 0.5,
+            speed: 0.1,
           },
           mode: "xy",
         },
@@ -71,16 +73,39 @@ const Dashboard = () => {
     },
   };
 
-  // Define the data object using the imported chartData
   const data = {
-    labels: chartData.labels, // Ensure your JSON file has a labels array
-    datasets: chartData.datasets, // Ensure your JSON file has a datasets array
+    labels: chartData.labels,
+    datasets: chartData.datasets,
+  };
+
+  const handleResetZoom = () => {
+    if (chartRef.current) {
+      chartRef.current.resetZoom();
+    }
   };
 
   return (
     <div style={{ marginTop: "20px" }}>
       <h2>Interactive Data Visualization Dashboard</h2>
-      <Line data={data} options={options} />
+      <button
+        onClick={handleResetZoom}
+        style={{
+          padding: "10px 20px",
+          margin: "10px 0",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          fontSize: "16px",
+          transition: "background-color 0.3s ease",
+        }}
+        onMouseEnter={(e) => (e.target.style.backgroundColor = "#0056b3")}
+        onMouseLeave={(e) => (e.target.style.backgroundColor = "#007bff")}
+      >
+        Reset Zoom
+      </button>
+      <Line ref={chartRef} data={data} options={options} />
     </div>
   );
 };
